@@ -152,7 +152,6 @@ public class InsertController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        this.resourceBundle = ResourceBundle.getBundle("resources", new Locale("ru", "RU"));
         ObservableList<String> listSemester = FXCollections.observableArrayList(
                 "3", "4", "8"
         );
@@ -171,6 +170,12 @@ public class InsertController implements Initializable {
         comboboxFormOfEducation.setItems(listFormOfEducation);
         comboboxPersonNationality.setItems(listNationality);
 
+        setInterfaceTexts();
+
+    }
+
+    public void setResourceBundle(ResourceBundle resourceBundle) {
+        this.resourceBundle = resourceBundle;
     }
 
     public void setInterfaceTexts() {
@@ -191,6 +196,7 @@ public class InsertController implements Initializable {
         labelStudyGroupName.setText(resourceBundle.getString("name"));
         labelStudyGroupX.setText(resourceBundle.getString("x"));
         labelStudyGroupY.setText(resourceBundle.getString("y"));
+        buttonSend.setText(resourceBundle.getString("send"));
     }
 
     @FXML

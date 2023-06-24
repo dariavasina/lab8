@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="393.0" prefWidth="543.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.InsertController">
+   <children>
+      <Label fx:id="labelKey" layoutX="24.0" layoutY="14.0" prefHeight="18.0" prefWidth="226.0" text="Введите ключ, который хотите вставить" />
+      <TextField fx:id="textfieldKey" layoutX="24.0" layoutY="32.0" />
+      <Label fx:id="labelStudyGroupName" layoutX="23.0" layoutY="63.0" prefHeight="18.0" prefWidth="150.0" text="Введите название группы" />
+      <TextField fx:id="textfieldStudyGroupName" layoutX="24.0" layoutY="78.0" />
+      <Label fx:id="labelStudyGroupCoordinates" layoutX="23.0" layoutY="103.0" prefHeight="18.0" prefWidth="150.0" text="Введите координаты" />
+      <Label fx:id="labelStudyGroupX" layoutX="25.0" layoutY="127.0" text="x: " />
+      <TextField fx:id="textfieldStudyGroupX" layoutX="47.0" layoutY="123.0" prefHeight="26.0" prefWidth="43.0" />
+      <Label fx:id="labelStudyGroupY" layoutX="104.0" layoutY="127.0" text="y:" />
+      <TextField fx:id="textfieldStudyGroupY" layoutX="115.0" layoutY="122.0" prefHeight="26.0" prefWidth="43.0" />
+      <Label fx:id="labelStudentsCount" layoutX="25.0" layoutY="149.0" prefHeight="18.0" prefWidth="166.0" text="Введите количество учеников" />
+      <TextField fx:id="textfieldStudentsCount" layoutX="25.0" layoutY="169.0" prefHeight="26.0" prefWidth="65.0" />
+      <Label fx:id="labelShouldBeExpelled" layoutX="23.0" layoutY="194.0" prefHeight="42.0" prefWidth="226.0" text="Количество учеников, которых надо исключить" wrapText="true" />
+      <TextField fx:id="textfieldShouldBeExpelled" layoutX="25.0" layoutY="231.0" prefHeight="26.0" prefWidth="65.0" />
+      <Label fx:id="labelFormOfEducation" layoutX="23.0" layoutY="256.0" prefHeight="18.0" prefWidth="150.0" text="Форма обучения" />
+      <ComboBox fx:id="comboboxFormOfEducation" layoutX="23.0" layoutY="273.0" prefWidth="150.0" />
+      <Label fx:id="labelSemester" layoutX="23.0" layoutY="302.0" prefHeight="18.0" prefWidth="150.0" text="Семестр" />
+      <ComboBox fx:id="comboboxSemester" layoutX="23.0" layoutY="320.0" prefWidth="150.0" />
+      <Label fx:id="labelPersonName" layoutX="307.0" layoutY="14.0" prefHeight="18.0" prefWidth="226.0" text="Имя админа группы" />
+      <TextField fx:id="textfieldPersonName" layoutX="304.0" layoutY="32.0" />
+      <Label fx:id="labelPersonColor" layoutX="307.0" layoutY="63.0" prefHeight="18.0" prefWidth="226.0" text="Цвет волос" />
+      <ComboBox fx:id="comboboxPersonColor" layoutX="304.0" layoutY="78.0" prefWidth="150.0" />
+      <Label fx:id="labelPersonLocation" layoutX="307.0" layoutY="103.0" prefHeight="18.0" prefWidth="150.0" text="Введите координаты" />
+      <Label fx:id="labelPersonLocationX" layoutX="304.0" layoutY="126.0" text="x: " />
+      <TextField fx:id="textfieldPersonLocationX" layoutX="321.0" layoutY="122.0" prefHeight="26.0" prefWidth="43.0" />
+      <Label fx:id="labelPersonLocationY" layoutX="371.0" layoutY="126.0" text="y:" />
+      <TextField fx:id="textfieldPersonLocationY" layoutX="382.0" layoutY="123.0" prefHeight="26.0" prefWidth="43.0" />
+      <Label fx:id="labelPersonLocationZ" layoutX="437.0" layoutY="127.0" text="z:" />
+      <TextField fx:id="textfieldPersonLocationZ" layoutX="446.0" layoutY="122.0" prefHeight="26.0" prefWidth="43.0" />
+      <Label fx:id="labelPersonPassportID" layoutX="309.0" layoutY="149.0" prefHeight="18.0" prefWidth="166.0" text="Номер паспорта" />
+      <TextField fx:id="textfieldPersonPassportID" layoutX="310.0" layoutY="169.0" prefHeight="26.0" prefWidth="65.0" />
+      <Label fx:id="labelPersonNationality" layoutX="309.0" layoutY="197.0" prefHeight="18.0" prefWidth="166.0" text="Национальность" />
+      <ComboBox fx:id="comboboxPersonNationality" layoutX="307.0" layoutY="218.0" prefWidth="150.0" />
+      <Button fx:id="buttonSend" layoutX="307.0" layoutY="272.0" mnemonicParsing="false" onAction="#getCollectionInput" prefHeight="26.0" prefWidth="114.0" text="Отправить" />
+      <Label fx:id="labelError" layoutX="305.0" layoutY="323.0" prefHeight="66.0" prefWidth="217.0" textFill="RED" wrapText="true" />
+   </children>
+</AnchorPane>

@@ -118,6 +118,7 @@ public class MainController implements Initializable {
         add("show");
         add("insert");
         add("execute_script");
+        add("remove_key");
         add("replace_if_greater");
         add("replace_if_lower");
         add("remove_greater_key");
@@ -132,15 +133,6 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        this.resourceBundle = ResourceBundle.getBundle("resources", new Locale("ru", "RU"));
-
-        List<String> localizedCommands = new ArrayList<>();
-        for (String command : items) {
-            String localizedCommand = this.resourceBundle.getString(command);
-            localizedCommands.add(localizedCommand);
-        }
-
-        commandList.getItems().addAll(localizedCommands);
         commandList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             // Update UI based on the selected item
             chosenCommand = commandList.getSelectionModel().getSelectedItem();
@@ -150,6 +142,8 @@ public class MainController implements Initializable {
                 throw new RuntimeException(e);
             }
         });
+
+        commandList.setVisible(true);
 
         setInterfaceTexts();
 
@@ -319,7 +313,9 @@ public class MainController implements Initializable {
 
         openShow();
 
-        loadVisualization();
+        labelRemoveKey.setVisible(true);
+        buttonRemoveKey.setVisible(true);
+        buttonClear.setVisible(true);
     }
 
     private Parent insertForm;
@@ -327,10 +323,9 @@ public class MainController implements Initializable {
     private Parent visualization;
 
     private void setInterfaceTexts() {
-
-        // Label
-
         labelRemoveKey.setText(resourceBundle.getString("remove_by_key"));
+        buttonRemoveKey.setText(resourceBundle.getString("remove"));
+        buttonClear.setText(resourceBundle.getString("clear"));
 
         // TableView and TableColumn
         idColumn.setText(resourceBundle.getString("id"));
@@ -345,9 +340,32 @@ public class MainController implements Initializable {
         countryColumn.setText(resourceBundle.getString("country"));
         formOfEducationColumn.setText(resourceBundle.getString("form_of_education"));
         keyColumn.setText(resourceBundle.getString("key"));
-        commandList.getItems().setAll();
+
+        ObservableList<String> observableItems = FXCollections.observableArrayList(items);
+        commandList.setItems(observableItems);
+
+        commandList.getItems().setAll(this.resourceBundle.getString("help"),
+                this.resourceBundle.getString("info"),
+                this.resourceBundle.getString("show"),
+                this.resourceBundle.getString("insert"),
+                this.resourceBundle.getString("execute_script"),
+                this.resourceBundle.getString("remove_by_key"),
+                this.resourceBundle.getString("replace_if_greater"),
+                this.resourceBundle.getString("replace_if_lower"),
+                this.resourceBundle.getString("remove_greater_key"),
+                this.resourceBundle.getString("count_by_students_count"),
+                this.resourceBundle.getString("visualize"));
+
+        languageMenu.setText(this.resourceBundle.getString("language"));
+        russianMenu.setText(this.resourceBundle.getString("russian"));
+        englishMenu.setText(this.resourceBundle.getString("english"));
+        swedishMenu.setText(this.resourceBundle.getString("swedish"));
+        czechMenu.setText(this.resourceBundle.getString("czech"));
+    }
 
 
+    public void setResourceBundle(ResourceBundle resourceBundle) {
+        this.resourceBundle = resourceBundle;
     }
 
     @FXML
@@ -360,7 +378,7 @@ public class MainController implements Initializable {
                 resourceBundle = ResourceBundle.getBundle("resources", new Locale("cs", "CZ"));
                 break;
             case "englishMenu":
-                resourceBundle = ResourceBundle.getBundle("resources", new Locale("en", "US"));
+                resourceBundle = ResourceBundle.getBundle("resources", new Locale("en", "NZ"));
                 break;
             case "russianMenu":
                 resourceBundle = ResourceBundle.getBundle("resources", new Locale("ru", "RU"));
@@ -372,14 +390,6 @@ public class MainController implements Initializable {
 
         setInterfaceTexts();
     }
-
-
-
-
-
-
-
-
 
 
 private void updateStudyGroup(StudyGroup studyGroup) {
@@ -398,7 +408,7 @@ private void updateStudyGroup(StudyGroup studyGroup) {
 
     private void showErrorWindow(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Ошибка");
+        alert.setTitle(this.resourceBundle.getString("error"));
 
         alert.setHeaderText(null);
         alert.setContentText(message);
@@ -418,8 +428,14 @@ private void updateStudyGroup(StudyGroup studyGroup) {
         try {
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("insert.fxml"));
-            insertForm = loader.load();
 
+            loader.setControllerFactory(controllerClass -> {
+                InsertController insertController = new InsertController();
+                insertController.setResourceBundle(this.resourceBundle);
+                return insertController;
+            });
+
+            insertForm = loader.load();
             anchorPane.getChildren().setAll(insertForm);
 
         } catch (IOException e) {
@@ -430,6 +446,12 @@ private void updateStudyGroup(StudyGroup studyGroup) {
     private void openReplaceIfGreaterForm() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("replace_if_greater.fxml"));
+
+            loader.setControllerFactory(controllerClass -> {
+                InsertController insertController = new InsertController();
+                insertController.setResourceBundle(this.resourceBundle);
+                return insertController;
+            });
             removeIfGreaterForm = loader.load();
 
             anchorPane.getChildren().setAll(removeIfGreaterForm);
@@ -445,15 +467,11 @@ private void updateStudyGroup(StudyGroup studyGroup) {
         CommandResponse response = App.networkManager.sendRequest(request);
         Map<Long, StudyGroup> collectionMap = response.getCollectionMap();
 
-
         List<StudyGroup> collection = new ArrayList<>(collectionMap.values());
 
         ObservableList<StudyGroup> observableCollection = FXCollections.observableList(collection);
-        //ObservableList<Long> keys = FXCollections.observableArrayList(collectionMap.keySet());
 
-        //table.setItems(keys);
         table.setItems(observableCollection);
-
 
     }
 
@@ -517,36 +535,37 @@ private void updateStudyGroup(StudyGroup studyGroup) {
 
     public void changeView(String command) throws IOException {
 
-        if (command.equals("info")) {
+        if (command.equals(this.resourceBundle.getString("info"))) {
             hideAll();
             textArea.setVisible(true);
             CommandRequest request = new CommandRequest(new InfoCommand());
             String response = App.networkManager.sendRequest(request).getOutput();
             textArea.setText(response);
-        } else if (command.equals("help")) {
+        } else if (command.equals(this.resourceBundle.getString("help"))) {
             hideAll();
             textArea.setVisible(true);
             CommandRequest request = new CommandRequest(new HelpCommand());
             String response = App.networkManager.sendRequest(request).getOutput();
             textArea.setText(response);
-        } else if (command.equals("insert")) {
+        } else if (command.equals(this.resourceBundle.getString("insert"))) {
             anchorPane.setVisible(true);
             hideAll();
             openInsertForm();
             loadVisualization();
-        } else if (command.equals("replace_if_greater")) {
+        } else if (command.equals(this.resourceBundle.getString("replace_if_greater"))) {
             hideAll();
             anchorPane.setVisible(true);
             openReplaceIfGreaterForm();
-        } else if (command.equals("show")) {
+        } else if (command.equals(this.resourceBundle.getString("show"))) {
             hideAll();
-            openShow();
             labelRemoveKey.setVisible(true);
             textfieldRemoveKey.setVisible(true);
             buttonRemoveKey.setVisible(true);
             buttonClear.setVisible(true);
+            openShow();
 
-        } else if (command.equals("visualize")) {
+
+        } else if (command.equals(this.resourceBundle.getString("visualize"))) {
             openShow();
             labelRemoveKey.setVisible(false);
             textfieldRemoveKey.setVisible(false);
@@ -554,20 +573,12 @@ private void updateStudyGroup(StudyGroup studyGroup) {
             buttonClear.setVisible(false);
 
             visualizationAnchorPane.setVisible(true);
-
-
-
-
-
-//            Scene scene = new Scene(fxmlLoader.load());
-//            Stage stage = new Stage();
-//            stage.setX(100);
-//            stage.setY(0);
-//            stage.setResizable(false);
-//            stage.setScene(scene);
-//            stage.show();
-
-
+        } else if (command.equals(this.resourceBundle.getString("remove_by_key"))) {
+            hideAll();
+            labelRemoveKey.setVisible(false);
+            textfieldRemoveKey.setVisible(false);
+            buttonRemoveKey.setVisible(false);
+            buttonClear.setVisible(false);
         }
 
     }

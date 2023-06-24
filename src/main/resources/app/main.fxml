@@ -28,7 +28,7 @@
          </children></AnchorPane>
       <ListView fx:id="commandList" layoutY="27.0" prefHeight="380.0" prefWidth="226.0" />
       <TextArea fx:id="textArea" editable="false" layoutX="227.0" layoutY="28.0" prefHeight="374.0" prefWidth="775.0" visible="false" />
-      <AnchorPane fx:id="anchorPane" layoutX="227.0" layoutY="-17.0" prefHeight="433.0" prefWidth="846.0" />
+      <AnchorPane fx:id="anchorPane" layoutX="227.0" layoutY="28.0" prefHeight="380.0" prefWidth="846.0" />
       <TableView fx:id="table" editable="true" layoutX="227.0" layoutY="27.0" prefHeight="380.0" prefWidth="876.0">
         <columns>
           <TableColumn fx:id="keyColumn" prefWidth="52.79997253417969" text="key" />

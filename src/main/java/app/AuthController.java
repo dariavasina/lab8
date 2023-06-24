@@ -113,7 +113,7 @@ public class AuthController {
                 resourceBundle = ResourceBundle.getBundle("resources", new Locale("cs", "CZ"));
                 break;
             case "english":
-                resourceBundle = ResourceBundle.getBundle("resources", new Locale("en", "US"));
+                resourceBundle = ResourceBundle.getBundle("resources", new Locale("en", "NZ"));
                 break;
             case "russian":
                 resourceBundle = ResourceBundle.getBundle("resources", new Locale("ru", "RU"));
@@ -148,7 +148,8 @@ public class AuthController {
             App.networkManager.setUser(username, password);
             changeStage(event);
         } else {
-            labelSuccess.setText("Неверный пароль. Попробуйте снова");
+            labelSuccess.setVisible(true);
+            labelSuccess.setText(this.resourceBundle.getString("wrongPassword"));
         }
     }
 
@@ -171,6 +172,13 @@ public class AuthController {
     public void changeStage(ActionEvent event) throws IOException {
 
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("main.fxml"));
+
+        fxmlLoader.setControllerFactory(controllerClass -> {
+            MainController mainController = new MainController();
+            mainController.setResourceBundle(this.resourceBundle);
+            return mainController;
+        });
+
         Scene scene = new Scene(fxmlLoader.load());
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);

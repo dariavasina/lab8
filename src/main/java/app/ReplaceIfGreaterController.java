@@ -15,10 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class ReplaceIfGreaterController implements Initializable {
     @FXML
@@ -123,6 +120,9 @@ public class ReplaceIfGreaterController implements Initializable {
     @FXML
     private Button buttonSend;
 
+    @FXML
+    private ResourceBundle resourceBundle;
+
     private StudyGroup studyGroup;
     private CommandResponse response;
     private String output;
@@ -174,9 +174,30 @@ public class ReplaceIfGreaterController implements Initializable {
         comboboxFormOfEducation.setItems(listFormOfEducation);
         comboboxPersonNationality.setItems(listNationality);
 
+        setInterfaceTexts();
+
+
     }
 
-
+    public void setInterfaceTexts() {
+        labelFormOfEducation.setText(resourceBundle.getString("form_of_education"));
+        labelKey.setText(resourceBundle.getString("key"));
+        labelPersonColor.setText(resourceBundle.getString("color"));
+        labelPersonLocation.setText(resourceBundle.getString("location"));
+        labelPersonLocationX.setText(resourceBundle.getString("x"));
+        labelPersonLocationY.setText(resourceBundle.getString("y"));
+        labelPersonLocationZ.setText(resourceBundle.getString("z"));
+        labelPersonName.setText(resourceBundle.getString("name"));
+        labelPersonNationality.setText(resourceBundle.getString("country"));
+        labelPersonPassportID.setText(resourceBundle.getString("passport"));
+        labelSemester.setText(resourceBundle.getString("semester"));
+        labelShouldBeExpelled.setText(resourceBundle.getString("should_be_expelled"));
+        labelStudentsCount.setText(resourceBundle.getString("students_count"));
+        labelStudyGroupCoordinates.setText(resourceBundle.getString("coordinates"));
+        labelStudyGroupName.setText(resourceBundle.getString("name"));
+        labelStudyGroupX.setText(resourceBundle.getString("x"));
+        labelStudyGroupY.setText(resourceBundle.getString("y"));
+    }
 
     @FXML
     public void getCollectionInput(ActionEvent event) throws Exception {

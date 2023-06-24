@@ -53,8 +53,5 @@ public class App extends Application {
             System.exit(0);
         }
 
-
-        //todo fix problem with entering y-coord in location
-        //todo REGISTRATION
     }
 }
