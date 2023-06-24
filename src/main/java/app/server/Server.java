@@ -39,7 +39,7 @@ public class Server {
         String password = null;
 
         try {
-            Scanner credentials = new Scanner(new FileReader("C:/Users/Da/IdeaProjects/d/lab8/credentials.txt"));
+            Scanner credentials = new Scanner(new FileReader("credentials.txt"));
             username = credentials.nextLine().trim();
             password = credentials.nextLine().trim();
         } catch (FileNotFoundException e) {

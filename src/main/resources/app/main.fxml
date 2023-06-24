@@ -29,9 +29,8 @@
       <ListView fx:id="commandList" layoutY="27.0" prefHeight="380.0" prefWidth="226.0" />
       <TextArea fx:id="textArea" editable="false" layoutX="227.0" layoutY="28.0" prefHeight="374.0" prefWidth="775.0" visible="false" />
       <AnchorPane fx:id="anchorPane" layoutX="227.0" layoutY="28.0" prefHeight="380.0" prefWidth="846.0" />
-      <TableView fx:id="table" editable="true" layoutX="227.0" layoutY="27.0" prefHeight="380.0" prefWidth="876.0">
+      <TableView fx:id="table" editable="true" layoutX="227.0" layoutY="27.0" prefHeight="380.0" prefWidth="823.0">
         <columns>
-          <TableColumn fx:id="keyColumn" prefWidth="52.79997253417969" text="key" />
           <TableColumn fx:id="idColumn" prefWidth="55.20001220703125" text="id" />
             <TableColumn fx:id="nameColumn" prefWidth="60.00006103515625" text="name" />
             <TableColumn prefWidth="43.20001220703125" text="x" fx:id="xColumn" />
@@ -42,7 +41,7 @@
             <TableColumn fx:id="semesterColumn" prefWidth="67.99993896484375" text="semester" />
             <TableColumn fx:id="adminNameColumn" prefWidth="83.199951171875" text="name_admin" />
             <TableColumn fx:id="passportColumn" prefWidth="66.4000244140625" text="passport" />
-            <TableColumn fx:id="countryColumn" prefWidth="97.60003662109375" text="country" />
+            <TableColumn fx:id="countryColumn" prefWidth="77.5999755859375" text="country" />
         </columns>
       </TableView>
       <Label layoutX="237.0" layoutY="417.0">

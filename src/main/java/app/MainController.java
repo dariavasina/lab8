@@ -156,8 +156,82 @@ public class MainController implements Initializable {
         idColumn.setCellValueFactory(new PropertyValueFactory<StudyGroup, Long>("id"));
         nameColumn.setCellValueFactory(new PropertyValueFactory<StudyGroup, String>("name"));
         studentsCountColumn.setCellValueFactory(new PropertyValueFactory<StudyGroup, Integer>("studentsCount"));
+
+        studentsCountColumn.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Integer>() {
+            @Override
+            public String toString(Integer value) {
+                return value != null ? value.toString() : "";
+            }
+
+            @Override
+            public Integer fromString(String text) {
+                try {
+                    return Integer.parseInt(text);
+                } catch (NumberFormatException e) {
+                    showErrorWindow("Пожалуйста, введите число корректно");
+                    return null;
+                }
+            }
+        }));
+
+        studentsCountColumn.setEditable(true);
+        studentsCountColumn.setOnEditCommit(event -> {
+            StudyGroup studyGroup = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            Integer newValue = event.getNewValue();
+            if (newValue != null) {
+                try {
+                    studyGroup.setStudentsCount(newValue);
+                } catch (InvalidInputException e) {
+                    //
+                }
+            }
+            updateStudyGroup(studyGroup);
+
+
+            table.refresh();
+        });
+
+
+
         shouldBeExpelledColumn.setCellValueFactory(new PropertyValueFactory<StudyGroup, Integer>("shouldBeExpelled"));
+
+        shouldBeExpelledColumn.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Integer>() {
+            @Override
+            public String toString(Integer value) {
+                return value != null ? value.toString() : "";
+            }
+
+            @Override
+            public Integer fromString(String text) {
+                try {
+                    return Integer.parseInt(text);
+                } catch (NumberFormatException e) {
+                    showErrorWindow("Пожалуйста, введите число корректно");
+                    return null;
+                }
+            }
+        }));
+
+        shouldBeExpelledColumn.setEditable(true);
+        shouldBeExpelledColumn.setOnEditCommit(event -> {
+            StudyGroup studyGroup = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            Integer newValue = event.getNewValue();
+            if (newValue != null) {
+                try {
+                    studyGroup.setShouldBeExpelled(newValue);
+                } catch (InvalidInputException e) {
+                    //
+                }
+            }
+            updateStudyGroup(studyGroup);
+
+
+            table.refresh();
+        });
+
+
         formOfEducationColumn.setCellValueFactory(new PropertyValueFactory<StudyGroup, FormOfEducation>("formOfEducation"));
+
         semesterColumn.setCellValueFactory(new PropertyValueFactory<StudyGroup, Semester>("semester"));
 
         xColumn.setCellValueFactory(cellData -> {
@@ -180,6 +254,26 @@ public class MainController implements Initializable {
             }
             return null;
         });
+
+        adminNameColumn.setEditable(true);
+        adminNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        adminNameColumn.setOnEditCommit(event -> {
+            StudyGroup studyGroup = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            String newValue = event.getNewValue();
+            try {
+                Person admin = studyGroup.getGroupAdmin();
+                admin.setName(newValue);
+                studyGroup.setGroupAdmin(admin);
+            } catch (Exception e) {
+                showErrorWindow(e.getMessage());
+            }
+
+            updateStudyGroup(studyGroup);
+
+            table.refresh();
+        });
+
+
 
         passportColumn.setCellValueFactory(cellData -> {
             StudyGroup studyGroup = cellData.getValue();
@@ -226,11 +320,15 @@ public class MainController implements Initializable {
 
 
 
-//        country.setCellValueFactory(cellData -> {
-//            StudyGroup studyGroup = cellData.getValue();
-//            String countryValue = studyGroup.getGroupAdmin().getNationality().toString();
-//            return new SimpleStringProperty(countryValue);
-//        });
+        countryColumn.setCellValueFactory(cellData -> {
+            StudyGroup studyGroup = cellData.getValue();
+            if (studyGroup.getGroupAdmin() != null) {
+                String countryValue = studyGroup.getGroupAdmin().getNationality().toString();
+                return new SimpleStringProperty(countryValue);
+            }
+            return null;
+
+        });
 
         table.setEditable(true);
 
@@ -339,7 +437,6 @@ public class MainController implements Initializable {
         passportColumn.setText(resourceBundle.getString("passport"));
         countryColumn.setText(resourceBundle.getString("country"));
         formOfEducationColumn.setText(resourceBundle.getString("form_of_education"));
-        keyColumn.setText(resourceBundle.getString("key"));
 
         ObservableList<String> observableItems = FXCollections.observableArrayList(items);
         commandList.setItems(observableItems);
@@ -417,10 +514,10 @@ private void updateStudyGroup(StudyGroup studyGroup) {
 
     private void showInformationWindow(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Результат");
+        alert.setTitle(this.resourceBundle.getString("result"));
 
         alert.setHeaderText(null);
-        alert.setContentText("Команда выполнена успешно");
+        alert.setContentText(this.resourceBundle.getString("success"));
         alert.showAndWait();
     }
 
@@ -494,8 +591,12 @@ private void updateStudyGroup(StudyGroup studyGroup) {
         try {
             command.setArgs(new String[]{keyText});
         } catch (InvalidArgumentsException e) {
-            showErrorWindow(e.getMessage());
+            //showErrorWindow("");
+        }  catch (NullPointerException e) {
+            showErrorWindow("Такого ключа не существует");
+            System.out.println(e.getMessage());
         }
+
 
         CommandRequest request = new CommandRequest(command);
         String response = App.networkManager.sendRequest(request).getOutput().toString();
@@ -506,13 +607,14 @@ private void updateStudyGroup(StudyGroup studyGroup) {
 
     }
 
-    public void clear() {
+    @FXML
+    protected void clear(ActionEvent event) throws IOException{
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Подтверждение");
         alert.setContentText("Вы уверены, что хотите очистить коллекцию?");
 
-        ButtonType yesButton = new ButtonType("Да");
-        ButtonType noButton = new ButtonType("Нет");
+        ButtonType yesButton = new ButtonType(this.resourceBundle.getString("yes"));
+        ButtonType noButton = new ButtonType(this.resourceBundle.getString("no"));
 
         alert.getButtonTypes().setAll(yesButton, noButton);
 
@@ -529,7 +631,9 @@ private void updateStudyGroup(StudyGroup studyGroup) {
         }
 
         table.refresh();
-        loadVisualization();
+
+        //
+        // loadVisualization();
     }
 
 
@@ -551,13 +655,14 @@ private void updateStudyGroup(StudyGroup studyGroup) {
             anchorPane.setVisible(true);
             hideAll();
             openInsertForm();
-            loadVisualization();
+            //loadVisualization();
         } else if (command.equals(this.resourceBundle.getString("replace_if_greater"))) {
             hideAll();
             anchorPane.setVisible(true);
             openReplaceIfGreaterForm();
         } else if (command.equals(this.resourceBundle.getString("show"))) {
             hideAll();
+            visualizationAnchorPane.setVisible(true);
             labelRemoveKey.setVisible(true);
             textfieldRemoveKey.setVisible(true);
             buttonRemoveKey.setVisible(true);
@@ -573,15 +678,10 @@ private void updateStudyGroup(StudyGroup studyGroup) {
             buttonClear.setVisible(false);
 
             visualizationAnchorPane.setVisible(true);
-        } else if (command.equals(this.resourceBundle.getString("remove_by_key"))) {
-            hideAll();
-            labelRemoveKey.setVisible(false);
-            textfieldRemoveKey.setVisible(false);
-            buttonRemoveKey.setVisible(false);
-            buttonClear.setVisible(false);
-        }
 
+        }
     }
+
 
     public void loadVisualization() {
         CommandWithResponse commandShow = new ShowCommand();
