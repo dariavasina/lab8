@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+
+<TableView fx:id="table" editable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="466.0" prefWidth="775.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.ShowController">
+  <columns>
+    <TableColumn fx:id="id" prefWidth="52.00006103515625" text="id" />
+    <TableColumn fx:id="name" prefWidth="96.00003051757812" text="name" />
+      <TableColumn prefWidth="24.79998779296875" text="x" fx:id="x" />
+      <TableColumn fx:id="y" prefWidth="28.79998779296875" text="y" />
+      <TableColumn fx:id="students_count" prefWidth="102.4000244140625" text="students_count" />
+      <TableColumn fx:id="should_be_expelled" prefWidth="84.79998779296875" text="should_be_expelled" />
+      <TableColumn fx:id="form_of_education" prefWidth="75.0" text="form_of_education" />
+      <TableColumn fx:id="semester" prefWidth="60.79998779296875" text="semester" />
+      <TableColumn fx:id="name_admin" prefWidth="83.20001220703125" text="name_admin" />
+      <TableColumn fx:id="passport" prefWidth="75.0" text="passport" />
+      <TableColumn fx:id="country" prefWidth="85.5999755859375" text="country" />
+  </columns>
+</TableView>
