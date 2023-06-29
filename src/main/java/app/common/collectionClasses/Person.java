@@ -99,8 +99,12 @@ public class Person implements Serializable {
             return false;
         }
         Person person = (Person) obj;
-        return name.equals(person.getName()) && passportID.equals(person.getPassportID())
-                && hairColor.equals(person.getHairColor()) && nationality.equals(person.getNationality())
-                && location.equals(person.getLocation());
+        return true;
+//        if (person.getName() == null) {
+//            return false;
+//        }
+//        return name.equals(person.getName()) && passportID.equals(person.getPassportID())
+//                && hairColor.equals(person.getHairColor()) && nationality.equals(person.getNationality())
+//                && location.equals(person.getLocation());
     }
 }

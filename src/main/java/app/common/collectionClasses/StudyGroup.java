@@ -155,10 +155,23 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
         if (obj.getClass() != StudyGroup.class) {
             return false;
         }
-        StudyGroup studyGroup = (StudyGroup) obj;
-        return (name.equals(studyGroup.getName()) && id.equals(studyGroup.getId())
-                && coordinates.equals(studyGroup.getCoordinates()) && studyGroup.equals(studyGroup.getStudentsCount())
-                && shouldBeExpelled.equals(studyGroup.getShouldBeExpelled()) && formOfEducation.equals(studyGroup.getFormOfEducation())
-                && groupAdmin.equals(studyGroup.getGroupAdmin()));
+       StudyGroup studyGroup = (StudyGroup) obj;
+
+//        System.out.println(name.equals(studyGroup.getName()));
+//        System.out.println(id.equals(studyGroup.getId()));
+//        System.out.println(coordinates.equals(studyGroup.getCoordinates()));
+//        System.out.println(studentsCount.equals(studyGroup.getStudentsCount()));
+//        System.out.println(shouldBeExpelled.equals(studyGroup.getShouldBeExpelled()));
+//        System.out.println(formOfEducation.equals(studyGroup.getFormOfEducation()));
+//        System.out.println(groupAdmin.equals(studyGroup.getGroupAdmin()));
+
+//        return (name.equals(studyGroup.getName()) && id.equals(studyGroup.getId())
+//                && coordinates.equals(studyGroup.getCoordinates()) && studentsCount.equals(studyGroup.getStudentsCount())
+//                && shouldBeExpelled.equals(studyGroup.getShouldBeExpelled())
+//                && groupAdmin.equals(studyGroup.getGroupAdmin()));
+        return coordinates.equals(studyGroup.getCoordinates());
+
+//formOfEducation.equals(studyGroup.getFormOfEducation()
     }
 }
+

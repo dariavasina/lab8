@@ -41,7 +41,7 @@ public class Coordinates implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj.getClass() != Location.class) {
+        if (obj.getClass() != Coordinates.class) {
             return false;
         }
         Coordinates coordinates = (Coordinates) obj;

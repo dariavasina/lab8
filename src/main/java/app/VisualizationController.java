@@ -42,7 +42,7 @@ public class VisualizationController implements Initializable {
         animateStudyGroupsToPositions();
 
         Thread thread = new Thread(() -> {
-            Duration durationShow = Duration.seconds(1);
+            Duration durationShow = Duration.seconds(5);
             Timeline timelineShow = new Timeline(new KeyFrame(durationShow, event -> {
                     checkForUpdates();
             }));
@@ -105,7 +105,7 @@ public class VisualizationController implements Initializable {
         timeline.getKeyFrames().add(
                 new KeyFrame(Duration.millis(ANIMATION_DURATION_MS),
                         event -> {
-                            double newY = rectangle.getLayoutY() + 2; // Move the rectangle by a small increment
+                            double newY = rectangle.getLayoutY() + 4; // Move the rectangle by a small increment
                             rectangle.setLayoutY(newY);
                             if (newY >= targetY) {
                                 timeline.stop(); // Stop the animation when the rectangle reaches the target position
@@ -120,39 +120,65 @@ public class VisualizationController implements Initializable {
     }
 
 
+//    private void redrawStudyGroup(StudyGroup updatedStudyGroup, int index) {
+//        studyGroups.set(index, updatedStudyGroup); // Update the study group in the studyGroups list
+//
+//        Rectangle rectangle = rectangles.get(index);
+//        double targetY = updatedStudyGroup.getCoordinates().getY(); // Get the updated target Y coordinate
+//
+//        // Check if the rectangle is already in the correct position
+//        if (rectangle.getLayoutY() == targetY) {
+//            return; // No need to redraw or animate
+//        }
+//
+//        Timeline timeline = new Timeline();
+//        timeline.getKeyFrames().add(
+//                new KeyFrame(Duration.millis(ANIMATION_DURATION_MS),
+//                        event -> {
+//                            double currentY = rectangle.getLayoutY();
+//                            double increment = Math.signum(targetY - currentY) * 2; // Calculate the increment based on the direction
+//                            double newY = currentY + increment; // Move the rectangle by the increment
+//
+//                            if (Math.abs(targetY - currentY) <= Math.abs(increment)) {
+//                                // Rectangle is close enough to the target position, set it exactly to the target
+//                                rectangle.setLayoutY(targetY);
+//                                timeline.stop(); // Stop the animation
+//                            } else {
+//                                rectangle.setLayoutY(newY);
+//                            }
+//                        }
+//                )
+//        );
+//        timeline.setCycleCount(Timeline.INDEFINITE);
+//
+//        timeline.play();
+//    }
+
+
     private void redrawStudyGroup(StudyGroup updatedStudyGroup, int index) {
+        StudyGroup previousStudyGroup = studyGroups.get(index); // Get the previous study group
         studyGroups.set(index, updatedStudyGroup); // Update the study group in the studyGroups list
 
-        Rectangle rectangle = rectangles.get(index);
-        double targetY = updatedStudyGroup.getCoordinates().getY(); // Get the updated target Y coordinate
+        Rectangle previousRectangle = rectangles.get(index); // Get the previous rectangle
 
-        // Check if the rectangle is already in the correct position
-        if (rectangle.getLayoutY() == targetY) {
-            return; // No need to redraw or animate
-        }
+        visualizationAnchorPane.getChildren().remove(previousRectangle); // Remove the previous rectangle from the anchor pane
 
-        Timeline timeline = new Timeline();
-        timeline.getKeyFrames().add(
-                new KeyFrame(Duration.millis(ANIMATION_DURATION_MS),
-                        event -> {
-                            double currentY = rectangle.getLayoutY();
-                            double increment = Math.signum(targetY - currentY) * 2; // Calculate the increment based on the direction
-                            double newY = currentY + increment; // Move the rectangle by the increment
+        // Create a new rectangle for the updated study group
+        Rectangle newRectangle = new Rectangle(STUDY_GROUP_WIDTH, STUDY_GROUP_HEIGHT, STUDY_GROUP_COLOR);
+        newRectangle.setUserData(updatedStudyGroup);
+        rectangles.set(index, newRectangle); // Replace the previous rectangle with the new one in the rectangles list
+        visualizationAnchorPane.getChildren().add(newRectangle); // Add the new rectangle to the anchor pane
 
-                            if (Math.abs(targetY - currentY) <= Math.abs(increment)) {
-                                // Rectangle is close enough to the target position, set it exactly to the target
-                                rectangle.setLayoutY(targetY);
-                                timeline.stop(); // Stop the animation
-                            } else {
-                                rectangle.setLayoutY(newY);
-                            }
-                        }
-                )
-        );
-        timeline.setCycleCount(Timeline.INDEFINITE);
+        newRectangle.setOnMouseClicked(event -> showStudyGroupInfo(updatedStudyGroup));
 
-        timeline.play();
+        double startX = updatedStudyGroup.getCoordinates().getX();
+        double startY = updatedStudyGroup.getCoordinates().getY();
+
+        newRectangle.setLayoutX(startX);
+        newRectangle.setLayoutY(startY);
     }
+
+
 
 
 
@@ -174,7 +200,7 @@ public class VisualizationController implements Initializable {
             timeline.getKeyFrames().add(
                     new KeyFrame(Duration.millis(ANIMATION_DURATION_MS),
                             event -> {
-                                double newY = rectangle.getLayoutY() + 2; // Move the rectangle by a small increment
+                                double newY = rectangle.getLayoutY() + 4; // Move the rectangle by a small increment
                                 rectangle.setLayoutY(newY);
                                 if (newY >= targetY) {
                                     timeline.stop(); // Stop the animation when the rectangle reaches the target position
@@ -190,22 +216,56 @@ public class VisualizationController implements Initializable {
 
     private void checkForUpdates() {
         List<StudyGroup> newStudyGroups = getStudyGroupCollection();
+        System.out.println("this is newStudyGroups");
+
+
+        for (int k = 0; k < newStudyGroups.size(); k++) {
+            System.out.println(k);
+            System.out.println(newStudyGroups.get(k));
+        }
+
+        System.out.println("this is old studygroups");
+
+        for (int m = 0; m < studyGroups.size(); m++) {
+            System.out.println(m);
+            System.out.println(studyGroups.get(m));
+        }
+
+        System.out.println("\nstart of cycles");
+
         for (int i = 0; i < newStudyGroups.size(); i++) {
             StudyGroup studyGroup = newStudyGroups.get(i);
+            System.out.println("this is i");
+            System.out.println(i);
+            System.out.println(studyGroup);
+
+
             boolean isNewStudyGroup = true;
+
+
+
             for (int j = 0; j < studyGroups.size(); j++) {
+                System.out.println("this is j");
+                System.out.println(j);
+                System.out.println(studyGroups.get(j));
                 if (Objects.equals(studyGroup.getId(), studyGroups.get(j).getId())) {
+                    System.out.println(i + " " + j + " " +  Objects.equals(studyGroup.getId(), studyGroups.get(j).getId()));
                     isNewStudyGroup = false;
                     if (!studyGroup.equals(studyGroups.get(j))) {
                         // Study group has been updated, redraw it if necessary
-                        if (!updatedStudyGroups.contains(studyGroup)) {
-                            updatedStudyGroups.add(studyGroup);
-                            redrawStudyGroup(studyGroup, i);
-                        }
+                        //if (!updatedStudyGroups.contains(studyGroup)) {
+                        //updatedStudyGroups.add(studyGroup);
+//                        studyGroups.remove(j);
+                        studyGroups.set(j, studyGroup);
+                        //redrawStudyGroup(studyGroup, i);
+                        redrawStudyGroup(studyGroup, j);
+                        //redrawStudyGroup(studyGroup, studyGroups.indexOf(studyGroup));
                     }
-                    break;
+                    //break;
                 }
             }
+            System.out.println(" this is i after fors");
+            System.out.println("isNewStudyGroup: " + isNewStudyGroup);;
             if (isNewStudyGroup) {
                 // New study group detected, draw it
                 drawNewStudyGroup(studyGroup);
