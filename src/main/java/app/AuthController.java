@@ -176,6 +176,7 @@ public class AuthController {
         fxmlLoader.setControllerFactory(controllerClass -> {
             MainController mainController = new MainController();
             mainController.setResourceBundle(this.resourceBundle);
+            mainController.setUsername(usernameInput.getText());
             return mainController;
         });
 
@@ -184,6 +185,8 @@ public class AuthController {
         stage.setScene(scene);
         stage.setX(100);
         stage.setY(10);
+        MainController controller = (MainController) fxmlLoader.getController();
+        controller.setStage(stage);
         stage.show();
     }
  }

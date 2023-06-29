@@ -278,15 +278,6 @@ public class InsertController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText("Команда " + commandName + " завершена успешно");
         alert.showAndWait();
-//        alert.setOnHidden(e -> {
-//            for (TextField t : textFieldArrayList) {
-//                t.clear();
-//            }
-//
-//            for (ComboBox<String> c : comboboxArrayList) {
-//                c.getSelectionModel().clearSelection();
-//            }
-//        });
     }
 
 }

@@ -27,6 +27,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.util.StringConverter;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Locale;
+
 
 import java.net.URL;
 import java.util.*;
@@ -71,10 +76,32 @@ public class ShowController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        StringConverter<Integer> numberConverter = new StringConverter<>() {
+            NumberFormat format = NumberFormat.getInstance(Locale.getDefault());
+
+            @Override
+            public String toString(Integer number) {
+                if (number != null) {
+                    return format.format(number);
+                } else {
+                    return "";
+                }
+            }
+
+            @Override
+            public Integer fromString(String string) {
+                try {
+                    return format.parse(string).intValue();
+                } catch (ParseException e) {
+                    return 0; // or any default value
+                }
+            }
+        };
+
+
         id.setCellValueFactory(new PropertyValueFactory<StudyGroup, Long>("id"));
         name.setCellValueFactory(new PropertyValueFactory<StudyGroup, String>("name"));
-//        x.setCellValueFactory(new PropertyValueFactory<StudyGroup, Double>("coordinates.x"));
-//        y.setCellValueFactory(new PropertyValueFactory<StudyGroup, Integer>("coordinates.y"));
         students_count.setCellValueFactory(new PropertyValueFactory<StudyGroup, Integer>("studentsCount"));
         should_be_expelled.setCellValueFactory(new PropertyValueFactory<StudyGroup, Integer>("shouldBeExpelled"));
         form_of_education.setCellValueFactory(new PropertyValueFactory<StudyGroup, FormOfEducation>("formOfEducation"));
@@ -85,6 +112,12 @@ public class ShowController implements Initializable {
             double xValue = studyGroup.getCoordinates().getX();
             return new SimpleDoubleProperty(xValue).asObject();
         });
+
+        y.setCellFactory(TextFieldTableCell.forTableColumn(numberConverter));
+        students_count.setCellFactory(TextFieldTableCell.forTableColumn(numberConverter));
+        should_be_expelled.setCellFactory(TextFieldTableCell.forTableColumn(numberConverter));
+
+
 
         y.setCellValueFactory(cellData -> {
             StudyGroup studyGroup = cellData.getValue();

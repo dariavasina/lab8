@@ -26,7 +26,6 @@ public class CommandParser {
     public CommandParser() {};
 
     public CommandParser(StudyGroupCollectionManager collection, FileManager fileManager, String fileName) {
-        //this(collection);
         this.filename = fileName;
         this.fileManager = fileManager;
     }

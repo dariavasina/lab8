@@ -9,7 +9,6 @@ import app.networkStructures.CommandRequest;
 import app.networkStructures.CommandResponse;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,20 +16,22 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import java.text.NumberFormat;
+import java.util.Locale;
+
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.NumberFormat;
 import java.util.*;
 
 public class MainController implements Initializable {
@@ -133,6 +134,9 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        Locale locale = this.resourceBundle.getLocale();
+        NumberFormat nf = NumberFormat.getInstance(locale);
+
         commandList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             // Update UI based on the selected item
             chosenCommand = commandList.getSelectionModel().getSelectedItem();
@@ -157,6 +161,14 @@ public class MainController implements Initializable {
         nameColumn.setCellValueFactory(new PropertyValueFactory<StudyGroup, String>("name"));
         studentsCountColumn.setCellValueFactory(new PropertyValueFactory<StudyGroup, Integer>("studentsCount"));
 
+//        studentsCountColumn.setCellValueFactory(cellData -> {
+//            StudyGroup studyGroup = cellData.getValue();
+//            Integer studentsCount = studyGroup.getStudentsCount();
+//            String formattedValue = nf.format(studentsCount);
+//            return new SimpleStringProperty(formattedValue);
+//        });
+
+
         studentsCountColumn.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Integer>() {
             @Override
             public String toString(Integer value) {
@@ -177,6 +189,7 @@ public class MainController implements Initializable {
         studentsCountColumn.setEditable(true);
         studentsCountColumn.setOnEditCommit(event -> {
             StudyGroup studyGroup = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            Integer oldValue = event.getOldValue();
             Integer newValue = event.getNewValue();
             if (newValue != null) {
                 try {
@@ -185,7 +198,15 @@ public class MainController implements Initializable {
                     //
                 }
             }
-            updateStudyGroup(studyGroup);
+
+            Boolean verified = updateStudyGroup(studyGroup);
+            if (!verified) {
+                try {
+                    studyGroup.setStudentsCount(oldValue);
+                } catch (InvalidInputException e) {
+                    //
+                }
+            }
 
 
             table.refresh();
@@ -215,6 +236,7 @@ public class MainController implements Initializable {
         shouldBeExpelledColumn.setEditable(true);
         shouldBeExpelledColumn.setOnEditCommit(event -> {
             StudyGroup studyGroup = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            Integer oldValue = event.getOldValue();
             Integer newValue = event.getNewValue();
             if (newValue != null) {
                 try {
@@ -223,8 +245,16 @@ public class MainController implements Initializable {
                     //
                 }
             }
-            updateStudyGroup(studyGroup);
 
+
+            Boolean verified = updateStudyGroup(studyGroup);
+            if (!verified) {
+                try {
+                    studyGroup.setShouldBeExpelled(oldValue);
+                } catch (InvalidInputException e) {
+                    //
+                }
+            }
 
             table.refresh();
         });
@@ -259,6 +289,7 @@ public class MainController implements Initializable {
         adminNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         adminNameColumn.setOnEditCommit(event -> {
             StudyGroup studyGroup = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            String oldValue = event.getOldValue();
             String newValue = event.getNewValue();
             try {
                 Person admin = studyGroup.getGroupAdmin();
@@ -268,7 +299,16 @@ public class MainController implements Initializable {
                 showErrorWindow(e.getMessage());
             }
 
-            updateStudyGroup(studyGroup);
+
+            Boolean verified = updateStudyGroup(studyGroup);
+            if (!verified) {
+                Person groupAdmin = studyGroup.getGroupAdmin();
+                try {
+                    groupAdmin.setName(oldValue);
+                } catch (InvalidInputException e) {
+                    //
+                }
+            }
 
             table.refresh();
         });
@@ -287,6 +327,7 @@ public class MainController implements Initializable {
         passportColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         passportColumn.setOnEditCommit(event -> {
             StudyGroup studyGroup = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            String oldValue = event.getOldValue();
             String newValue = event.getNewValue();
             try {
                 Person admin = studyGroup.getGroupAdmin();
@@ -296,7 +337,17 @@ public class MainController implements Initializable {
                 showErrorWindow(e.getMessage());
             }
 
-            updateStudyGroup(studyGroup);
+
+            Boolean verified = updateStudyGroup(studyGroup);
+            if (!verified) {
+                Person groupAdmin = studyGroup.getGroupAdmin();
+                try {
+                    groupAdmin.setPassportID(oldValue);
+                } catch (InvalidInputException e) {
+                    //
+                }
+            }
+
 
             table.refresh();
         });
@@ -313,22 +364,18 @@ public class MainController implements Initializable {
                         e.printStackTrace();
                     }
 
-                    updateStudyGroup(studyGroup);
+            Boolean verified = updateStudyGroup(studyGroup);
+            if (!verified) {
+                try {
+                    studyGroup.setName(event.getOldValue());
+                } catch (InvalidInputException e) {
+                    //
+                }
+            }
 
                     table.refresh();
                 });
 
-
-
-        countryColumn.setCellValueFactory(cellData -> {
-            StudyGroup studyGroup = cellData.getValue();
-            if (studyGroup.getGroupAdmin() != null) {
-                String countryValue = studyGroup.getGroupAdmin().getNationality().toString();
-                return new SimpleStringProperty(countryValue);
-            }
-            return null;
-
-        });
 
         table.setEditable(true);
 
@@ -366,7 +413,11 @@ public class MainController implements Initializable {
                     //
                 }
             }
-            updateStudyGroup(studyGroup);
+            Boolean verified = updateStudyGroup(studyGroup);
+            if (!verified) {
+                Coordinates coordinates = studyGroup.getCoordinates();
+                coordinates.setX(oldValue);
+            }
 
             table.refresh();
         });
@@ -391,6 +442,7 @@ public class MainController implements Initializable {
         yColumn.setEditable(true);
         yColumn.setOnEditCommit(event -> {
             StudyGroup studyGroup = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            Integer oldValue = event.getOldValue();
             Integer newValue = event.getNewValue();
             if (newValue != null) {
                 Coordinates coordinates = studyGroup.getCoordinates();
@@ -401,8 +453,11 @@ public class MainController implements Initializable {
                     //
                 }
             }
-            updateStudyGroup(studyGroup);
-
+            Boolean verified = updateStudyGroup(studyGroup);
+            if (!verified) {
+                Coordinates coordinates = studyGroup.getCoordinates();
+                coordinates.setY(oldValue);
+            }
 
             table.refresh();
         });
@@ -419,6 +474,7 @@ public class MainController implements Initializable {
     private Parent insertForm;
     private Parent removeIfGreaterForm;
     private Parent visualization;
+    private Parent executeScriptForm;
 
     private void setInterfaceTexts() {
         labelRemoveKey.setText(resourceBundle.getString("remove_by_key"));
@@ -458,6 +514,7 @@ public class MainController implements Initializable {
         englishMenu.setText(this.resourceBundle.getString("english"));
         swedishMenu.setText(this.resourceBundle.getString("swedish"));
         czechMenu.setText(this.resourceBundle.getString("czech"));
+
     }
 
 
@@ -489,7 +546,14 @@ public class MainController implements Initializable {
     }
 
 
-private void updateStudyGroup(StudyGroup studyGroup) {
+    private String username;
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+
+private boolean updateStudyGroup(StudyGroup studyGroup) {
         UpdateCommand command = new UpdateCommand();
 
         try {
@@ -498,9 +562,16 @@ private void updateStudyGroup(StudyGroup studyGroup) {
             throw new RuntimeException(e);
         }
         command.setStudyGroup(studyGroup);
+        command.setUsername(username);
 
         CommandRequest request = new CommandRequest(command);
         String response = App.networkManager.sendRequest(request).getOutput();
+        if (response.startsWith("Exception")) {
+            showErrorWindow(response);
+            return false;
+        }
+        table.refresh();
+        return true;
     }
 
     private void showErrorWindow(String message) {
@@ -636,6 +707,54 @@ private void updateStudyGroup(StudyGroup studyGroup) {
         // loadVisualization();
     }
 
+    public void openExecuteScript() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("execute_script.fxml"));
+
+            loader.setControllerFactory(controllerClass -> {
+               ExecuteScriptController executeScriptController = new ExecuteScriptController();
+                executeScriptController.setResourceBundle(this.resourceBundle);
+                return executeScriptController;
+            });
+            executeScriptForm = loader.load();
+
+            anchorPane.getChildren().setAll(executeScriptForm);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Parent visualizationForm;
+
+    public void openVisualization() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("visualization.fxml"));
+        loader.setControllerFactory(controllerClass -> {
+            VisualizationController visualizationController = new VisualizationController();
+            return visualizationController;
+        });
+        visualizationForm = loader.load();
+        Stage newStage = new Stage();
+        newStage.setTitle("New Window");
+
+        // Set the scene on the new stage
+
+        Scene scene = new Scene(visualizationForm);
+        newStage.setScene(scene);
+
+        // Show the new stage
+        newStage.show();
+    }
+
+
+    private Stage stage;
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+    public Stage getStage() {
+        return stage;
+    }
+
 
     public void changeView(String command) throws IOException {
 
@@ -677,46 +796,12 @@ private void updateStudyGroup(StudyGroup studyGroup) {
             buttonRemoveKey.setVisible(false);
             buttonClear.setVisible(false);
 
-            visualizationAnchorPane.setVisible(true);
+            openVisualization();
 
+        } else if (command.equals(this.resourceBundle.getString("execute_script"))) {
+            hideAll();
+            openExecuteScript();
         }
     }
-
-
-    public void loadVisualization() {
-        CommandWithResponse commandShow = new ShowCommand();
-        CommandRequest request = new CommandRequest(commandShow);
-        CommandResponse response = App.networkManager.sendRequest(request);
-        Map<Long, StudyGroup> collectionMap = response.getCollectionMap();
-
-        List<StudyGroup> collection = new ArrayList<>(collectionMap.values());
-
-
-        for (StudyGroup group : collection) {
-            Circle circle = new Circle();
-            circle.setCenterX(group.getCoordinates().getX());
-            circle.setCenterY(group.getCoordinates().getY());
-            circle.setRadius(group.getStudentsCount()); // Радиус зависит от количества учеников
-            circle.setFill(Color.BLUE); // Цвет окружности
-            visualizationAnchorPane.getChildren().add(circle);
-
-            Text text = new Text(group.getCoordinates().getX() - 15, group.getCoordinates().getY() - group.getStudentsCount() - 5, group.getName());
-            visualizationAnchorPane.getChildren().add(text);
-        }
-    }
-
-    public void addToVisualization(StudyGroup group) {
-        Circle circle = new Circle();
-        circle.setCenterX(group.getCoordinates().getX());
-        circle.setCenterY(group.getCoordinates().getY());
-        circle.setRadius(group.getStudentsCount()); // Радиус зависит от количества учеников
-        circle.setFill(Color.BLUE); // Цвет окружности
-        visualizationAnchorPane.getChildren().add(circle);
-
-        Text text = new Text(group.getCoordinates().getX() - 15, group.getCoordinates().getY() - group.getStudentsCount() - 5, group.getName());
-        visualizationAnchorPane.getChildren().add(text);
-    }
-
-
 
 }

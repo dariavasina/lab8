@@ -156,6 +156,9 @@ public class StudyGroup implements Comparable<StudyGroup>, Serializable {
             return false;
         }
         StudyGroup studyGroup = (StudyGroup) obj;
-        return name.equals(studyGroup.getName());
+        return (name.equals(studyGroup.getName()) && id.equals(studyGroup.getId())
+                && coordinates.equals(studyGroup.getCoordinates()) && studyGroup.equals(studyGroup.getStudentsCount())
+                && shouldBeExpelled.equals(studyGroup.getShouldBeExpelled()) && formOfEducation.equals(studyGroup.getFormOfEducation())
+                && groupAdmin.equals(studyGroup.getGroupAdmin()));
     }
 }

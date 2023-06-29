@@ -51,4 +51,13 @@ public class Location implements Serializable {
     public String toString() {
         return "X: " + x + ", Y: " + y + ", Z: " + z;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass() != Location.class) {
+            return false;
+        }
+        Location location = (Location) obj;
+        return x.equals(location.getX()) && y.equals(location.getY()) && z.equals(location.getZ());
+    }
 }

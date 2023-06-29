@@ -1,5 +1,7 @@
 package app.client;
 
+import app.App;
+import app.ExecuteScriptController;
 import app.common.collectionClasses.StudyGroup;
 import app.common.commands.CommandWithResponse;
 import app.common.dataStructures.Triplet;
@@ -7,6 +9,8 @@ import app.exceptions.*;
 import app.common.io.consoleIO.CommandParser;
 import app.networkStructures.CommandRequest;
 import app.networkStructures.CommandResponse;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TextArea;
 
 
 import java.io.File;
@@ -21,7 +25,7 @@ import java.util.Scanner;
 public class ScriptExecutor {
     private HashSet<String> executedScripts = new HashSet<>();
 
-    public void executeScript(String filename, InetAddress address, int port, Authenticator authenticator) throws ScriptRecursionException, FileAccessException {
+    public void executeScript(String filename, TextArea textAreaOutput) throws ScriptRecursionException, FileAccessException {
         executedScripts.add(filename);
 
         CommandParser commandParser = new CommandParser();
@@ -32,10 +36,7 @@ public class ScriptExecutor {
             }
             Scanner scanner = new Scanner(file);
             while (true) {
-                try (Socket socket = new Socket(address, port);
-                     ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                     ObjectInputStream in = new ObjectInputStream(socket.getInputStream())){
-
+                try {
                     Triplet<String, String[], StudyGroup> parsedCommand = commandParser.readCommand(scanner, true);
                     String commandName = parsedCommand.getFirst();
                     String[] args = parsedCommand.getSecond();
@@ -44,29 +45,26 @@ public class ScriptExecutor {
                             throw new ScriptRecursionException("You should not call execute_script recursively!");
                         }
                         executedScripts.add(args[0]);
-                        executeScript(args[0], address, port, authenticator);
+                        executeScript(args[0], textAreaOutput);
                     } else {
                         CommandParser cp = new CommandParser();
                         CommandWithResponse command = cp.pack(parsedCommand);
                         CommandRequest request = new CommandRequest(command);
-                        request.setUsername(authenticator.getUsername());
-                        request.setPassword(authenticator.getPassword());
+                        request.setUsername(App.authenticator.getUsername());
+                        request.setPassword(App.authenticator.getPassword());
 
-                        out.writeObject(request);
-                        out.flush();
-
-                        CommandResponse response = (CommandResponse) in.readObject();
+                        CommandResponse response = App.networkManager.sendRequest(request);
 
                         if (response == null) {
-                            System.out.println("Server is down\nPlease try again later");
+                            textAreaOutput.appendText("Server is down\nPlease try again later");
                         } else {
-                            System.out.println(response.getOutput());
+                            textAreaOutput.appendText(response.getOutput());
                         }
                     }
                 } catch (CommandDoesNotExistException | ScriptRecursionException | InvalidInputException |
                          KeyDoesNotExistException
-                         | InvalidArgumentsException | ClassNotFoundException | KeyAlreadyExistsException e) {
-                    System.out.println(e.getMessage());
+                         | InvalidArgumentsException | KeyAlreadyExistsException e) {
+                    showErrorWindow(e.getMessage());
 
                 } catch (Exception e) {
                     break;
@@ -75,6 +73,15 @@ public class ScriptExecutor {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    private void showErrorWindow(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Erorr");
+
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
 

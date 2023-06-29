@@ -36,6 +36,14 @@ public class Authenticator {
         this.port = port;
     }
 
+    public InetAddress getAddress() {
+        return address;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
     public boolean isAuthFlag() {
         return authFlag;
     }

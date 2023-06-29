@@ -92,4 +92,15 @@ public class Person implements Serializable {
                 "Nationality: " + nationality + ", " +
                 "Location: " + location;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass() != Person.class) {
+            return false;
+        }
+        Person person = (Person) obj;
+        return name.equals(person.getName()) && passportID.equals(person.getPassportID())
+                && hairColor.equals(person.getHairColor()) && nationality.equals(person.getNationality())
+                && location.equals(person.getLocation());
+    }
 }

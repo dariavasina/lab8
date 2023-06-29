@@ -59,6 +59,8 @@ public class UpdateCommand extends CommandWithResponse {
 
             DatabaseManager databaseManager = getDatabaseManager();
 
+            System.out.println("in update command database managing");
+
             for (Long key : data.keySet()) {
                 StudyGroup studyGroup = data.get(key);
 
@@ -70,11 +72,6 @@ public class UpdateCommand extends CommandWithResponse {
 
             getCollection().updateByID(id, newStudyGroup);
 
-            System.out.println("after update on map");
-            for (Long key: getCollection().getCollection().keySet()) {
-                System.out.println(key);
-                System.out.println(getCollection().getCollection().get(key));
-            }
         } finally {
             getCollection().getWriteLock().unlock();
         }

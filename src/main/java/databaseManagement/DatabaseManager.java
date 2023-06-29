@@ -33,8 +33,11 @@ public class DatabaseManager {
                 personInsertStatement.setNull(2, Types.NULL);
             }
 
-
-            personInsertStatement.setInt(3, getColorId(person.getHairColor()));
+            if (person.getHairColor() != null) {
+                personInsertStatement.setInt(3, getColorId(person.getHairColor()));
+            } else {
+                personInsertStatement.setNull(3, Types.NULL);
+            }
 
             if (person.getNationality() != null) {
                 personInsertStatement.setInt(4, getCountryId(person.getNationality()));
@@ -240,12 +243,11 @@ public class DatabaseManager {
 
 
             if (studyGroup.getGroupAdmin() != null) {
-                //System.out.println("i dont fail here hehe");
+
                 insertPerson(studyGroup.getGroupAdmin());
                 int groupAdminId = getPersonId(studyGroup.getGroupAdmin());
                 insertStudyGroupStatement.setInt(9, groupAdminId);
             } else {
-                //System.out.println("null is null");
                 insertStudyGroupStatement.setNull(9, Types.NULL);
             }
 

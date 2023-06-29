@@ -38,4 +38,13 @@ public class Coordinates implements Serializable {
     public String toString() {
         return "X: " + x + ", Y: " + y;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass() != Location.class) {
+            return false;
+        }
+        Coordinates coordinates = (Coordinates) obj;
+        return x.equals(coordinates.getX()) && y == coordinates.getY();
+    }
 }
