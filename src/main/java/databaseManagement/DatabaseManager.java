@@ -377,6 +377,23 @@ public class DatabaseManager {
         return true;
     }
 
+    public String getOwner(Long id) throws SQLException {
+        String getOwnerQuery = "select owner_id from study_group where study_group.id = ?";
+
+        try (PreparedStatement getOwnerStatement = databaseHandler.getConnection().prepareStatement(getOwnerQuery)) {
+
+            getOwnerStatement.setObject(1, id, Types.BIGINT);
+
+            ResultSet resultSet = getOwnerStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getString(1);
+            }
+        }
+
+        return null;
+    }
+
     /*private void deleteStudyGroup(int studyGroupId, int ownerId) throws SQLException {
         String deleteQuery = "DELETE FROM study_group WHERE id = ? and owner_id = ?";
         try (PreparedStatement preparedStatement = databaseHandler.getConnection().prepareStatement(deleteQuery)) {

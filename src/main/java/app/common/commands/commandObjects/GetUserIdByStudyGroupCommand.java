@@ -2,28 +2,44 @@ package app.common.commands.commandObjects;
 
 import app.common.collectionClasses.StudyGroup;
 import app.common.commands.CommandWithResponse;
+import app.exceptions.EmptyCollectionException;
+import app.exceptions.InvalidArgumentsException;
 import app.exceptions.ObjectAccessException;
 import app.networkStructures.CommandResponse;
+import databaseManagement.DatabaseManager;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 public class GetUserIdByStudyGroupCommand extends CommandWithResponse {
+
+    private StringBuilder output;
+
     @Override
-    public void execute() throws Exception {
-        Long key = Long.parseLong(getArgs()[0]);
+    public void setArgs(String[] args) throws InvalidArgumentsException {
+        Long key;
         try {
-            getCollection().getReadLock().lock();
-            Map<Long, StudyGroup> data = getCollection().getMap();
-
-            getCollection().getElementsOwners().get(data.get(key).getId()).equals(getUsername());
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+            key = Long.parseLong(args[0]);
+            super.setArgs(new String[]{String.valueOf(key)});
+        } catch (NumberFormatException e) {
+            throw new InvalidArgumentsException("The key must be a number! Please Try to enter a command again");
         }
+    }
 
+
+    @Override
+    public void execute() throws EmptyCollectionException, SQLException {
+
+        output = new StringBuilder();
+
+        long id = Long.parseLong(getArgs()[0]);
+        DatabaseManager databaseManager = getDatabaseManager();
+
+        output.append(databaseManager.getOwner(id));
     }
 
     @Override
     public CommandResponse getCommandResponse() {
-        return null;
+        return new CommandResponse(output.toString());
     }
 }

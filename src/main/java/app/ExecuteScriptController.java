@@ -38,6 +38,8 @@ public class ExecuteScriptController implements Initializable {
                 showErrorWindow(e.getMessage());
             }
         });
+
+        setInterfaceTexts();
     }
 
     private void showErrorWindow(String message) {
@@ -47,6 +49,10 @@ public class ExecuteScriptController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private void setInterfaceTexts() {
+        labelEnterPath.setText(this.resourceBundle.getString("enter_file_path"));
     }
 
     private ResourceBundle resourceBundle;
